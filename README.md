@@ -4,5 +4,7 @@ Graph proyect with C Language and SDL2 Library
 
 **How to Compile**
 
-    gcc -c main.c `sdl2-config --cflags`
-    gcc main.o `sdl2-config --libs`
+    gcc -c *.c `sdl2-config --cflags`
+    gcc -o raise *.o `sdl2-config --libs`
+
+    ./raise <test_map>
