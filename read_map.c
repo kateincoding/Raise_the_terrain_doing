@@ -4,6 +4,7 @@
  * count_numbers - count numbers from a file to set points of maps
  * @line: line that program give to us
  * it is necessary that line is a digit , change logical 
+ * Return: number of numbers
  */
 int count_numbers (char *line)
 {
@@ -22,6 +23,12 @@ int count_numbers (char *line)
 	return (numbers);
 }
 
+/**
+ * read_map_size - calculate the size of the grid and assign them in sdl_rt
+ * @map: structure in the map, where the fuction will assign the width and height
+ * @fd: file to read
+ * Return: void
+ */
 int read_map_size(sdl_rt map, FILE *fd)
 {
 	size_t buff_size;
@@ -36,9 +43,41 @@ int read_map_size(sdl_rt map, FILE *fd)
 	return (1);
 }
 
+/* we will create an array of arrays of line and then pass to array of integer */
+/**
+ * set_grid_value - set the value of number in each square of the grid
+ * @grid_line: grid_line (row) of data in int
+ * @line: line to read and pass to integer
+ * Return: void
+ */
+void set_grid_value(int *grid_line, char *line)
+{
+	int i;
+	char **list;
+
+	list = ft_strsplit(line, ' ');
+	i = 0;
+	while (list[i])
+	{
+		/* check if atoi can pass a negative number */
+		grid_line[i] = atoi(list[i]);
+		free(list[i]);
+		i++;
+	}
+	free(list);
+}
+
+/**
+ * read_map - main structure to read the map of file and create a grid
+ * @map: structure of values
+ * @av: argument of main
+ * Return: 1 if it is success
+ */
 int read_map(sdl_rt map, char *av)
 {
 	FILE *fd;
+	size_t buff_size;
+	char **buff;
 	unsigned int j;
 
 	fd = fopen(av[1], "r")
@@ -55,8 +94,16 @@ int read_map(sdl_rt map, char *av)
 	while(j <= map->height)
 		map->grid[j++] = (unsigned int *)malloc (sizeof(unsigned int *) * (map->width + 1));
 	j = 0;
-	/* asign a value in each size of grid */
-
+	/* set a value number in each size of grid */
+	while(getline(&buff,&buff_size,fd))
+	{
+		set_grid_value(map->grid[y], line);
+		free(line);
+		j++;
+	}
 	/* close fd */
 	close(fd);
+	/* EOF */
+	map->grid[j] = NULL;
+	return (1);
 }
