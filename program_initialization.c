@@ -37,5 +37,6 @@ int program_initialization(sdl_rt *map)
 	/*inicializar la estructura */
 	map->width = 0
 	map->height = 0;
+	map->grid = 0;
 	return (0);
 }
