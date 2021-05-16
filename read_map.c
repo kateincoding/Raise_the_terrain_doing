@@ -14,10 +14,10 @@ int count_numbers (char *line)
 	if (line)
 	{
 		tokn = strtok(line, " ");
-		while (tkn != NULL)
+		while (tokn != NULL)
 		{
 			numbers++;
-			tokn = strtok(NULL, " ")
+			tokn = strtok(NULL, " ");
 		}
 	}
 	return (numbers);
@@ -29,15 +29,15 @@ int count_numbers (char *line)
  * @fd: file to read
  * Return: void
  */
-int read_map_size(sdl_rt map, FILE *fd)
+int read_map_size(sdl_rt *map, FILE *fd)
 {
 	size_t buff_size;
-	char **buff;
+	char *buff;
 
 	while (getline(&buff, &buff_size, fd) != -1)
 	{
 		if (map->width = 0)
-			map->width = count_numbers(&buff);
+			map->width = count_numbers(buff);
 		map->height++;
 	}
 	return (1);
@@ -73,23 +73,23 @@ void set_grid_value(int *grid_line, char *line)
  * @av: argument of main
  * Return: 1 if it is success
  */
-int read_map(sdl_rt map, char *av)
+int read_map(sdl_rt *map, char *av)
 {
 	FILE *fd;
 	size_t buff_size;
-	char **buff;
+	char *buff;
 	unsigned int j;
 
-	fd = fopen(av[1], "r")
+	fd = fopen(av, "r");
 	if (!fd)
 	{
-		dprintf(2, "Can not open file")
+		dprintf(2, "Can not open file");
 		exit(EXIT_FAILURE);
 	}
 	/* calculate width and height with getline, strtok, isnumber */
 	read_map_size(map, fd);
 	/* create the grid size with width and height */
-	map->grid = (unsigned int**)malloc(sizeof(unsigned int *) * (map->height + 1));
+	map->grid = (unsigned int **)malloc(sizeof(unsigned int *) * (map->height + 1));
 	j = 0;
 	while(j <= map->height)
 		map->grid[j++] = (unsigned int *)malloc (sizeof(unsigned int *) * (map->width + 1));
@@ -97,12 +97,12 @@ int read_map(sdl_rt map, char *av)
 	/* set a value number in each size of grid */
 	while(getline(&buff,&buff_size,fd))
 	{
-		set_grid_value(map->grid[y], buff);
+		set_grid_value(map->grid[j], buff);
 		/*free(buff); */
 		j++;
 	}
 	/* close fd */
-	close(fd);
+	fclose(fd);
 	free(buff);
 	/* EOF */
 
