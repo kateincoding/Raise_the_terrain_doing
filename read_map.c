@@ -97,13 +97,15 @@ int read_map(sdl_rt map, char *av)
 	/* set a value number in each size of grid */
 	while(getline(&buff,&buff_size,fd))
 	{
-		set_grid_value(map->grid[y], line);
-		free(line);
+		set_grid_value(map->grid[y], buff);
+		/*free(buff); */
 		j++;
 	}
 	/* close fd */
 	close(fd);
+	free(buff);
 	/* EOF */
+
 	map->grid[j] = NULL;
 	return (1);
 }
