@@ -41,22 +41,29 @@ int main(int argc, char **argv)
 	/* Program_Initialization: Succes 0 */
 	if (program_initialization(&map) != 0)
 		return (1);
-	/* Read_map */
-
+	/* Read_map, in here we will only use the fd, so create and finish */
+	read_map(&map, argv[1]);
 	/* Program_Renderize */
+
+	/*
 	while (1)
 	{
 		SDL_SetRenderDrawColor(map.renderer, 0, 0, 0, 0);
 		SDL_RenderClear(map.renderer);
 		if (poll_events() == 1)
 			break;
-		/* Draw something here */
+		/* Draw something here *//*
 		draw_stuff(map);
 		SDL_RenderPresent(map.renderer);
 	}
+
+	*/
+
 	/* Program_Release : SDL variables and others */
+	/*
 	SDL_DestroyRenderer(map.renderer);
 	SDL_DestroyWindow(map.window);
 	SDL_Quit();
+	*/
 	return (0);
 }

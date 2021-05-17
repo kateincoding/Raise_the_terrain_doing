@@ -1,6 +1,5 @@
 #include "raise_the_terrain.h"
 #include <ctype.h>
-#include <publib.h>
 
 int ft_isnumber(char *number)
 {
@@ -95,18 +94,18 @@ int read_map_size(sdl_rt *map, char *av)
 void set_grid_value(int *grid_line, char *line)
 {
 	int i = 0;
-	char **list;
+	char *tokn;
 
-	strsplit(line, list, ' ');
-	i = 0;
-	while (list[i])
+	if (line)
 	{
-		/* check if atoi can pass a negative number */
-		grid_line[i] = atoi(list[i]);
-		free(list[i]);
-		i++;
+		tokn = strtok(line, " \t\n");
+		while (tokn != NULL)
+		{
+			grid_line[i] = atoi(tokn);
+			tokn = strtok(NULL, " \t\n");
+		}
+		tokn = NULL;
 	}
-	free(list);
 }
 
 /**
