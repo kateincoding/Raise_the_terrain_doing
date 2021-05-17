@@ -8,6 +8,7 @@ int program_initialization(sdl_rt *map)
 		fprintf(stderr, "Unable to initialize SDL: %s\n", SDL_GetError());
 		return (1);
 	}
+
 	/* Create a new window 
 	window = SDL_CreateWindow("SDL2 \\o/", SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED, 1260, 720,0); */
