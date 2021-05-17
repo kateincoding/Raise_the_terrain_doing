@@ -1,6 +1,6 @@
 #include "raise_the_terrain.h"
 #include <ctype.h>
-
+#include <publib.h>
 
 int ft_isnumber(char *number)
 {
@@ -17,7 +17,6 @@ int ft_isnumber(char *number)
 	return(1);
 }
 
-
 /**
  * count_numbers - count numbers from a file to set points of maps
  * @line: line that program give to us
@@ -26,7 +25,7 @@ int ft_isnumber(char *number)
  */
 int count_numbers (char *line)
 {
-	char *tokn;
+	char *tokn = NULL;
 	unsigned int numbers = 0;
 
 	if (line)
@@ -37,6 +36,7 @@ int count_numbers (char *line)
 			if (!ft_isnumber(tokn))
 				return (0);
 			numbers++;
+			printf("tokn = '%s'.\n", tokn);
 			tokn = strtok(NULL, " \t\n");
 		}
 		tokn = NULL;
@@ -50,10 +50,19 @@ int count_numbers (char *line)
  * @fd: file to read
  * Return: void
  */
-int read_map_size(sdl_rt *map, FILE *fd)
+int read_map_size(sdl_rt *map, char *av)
 {
-	size_t buff_size;
-	char *buff;
+	FILE *fd = NULL;
+	size_t buff_size = 0;
+	char *buff = NULL;
+
+	fd = fopen(av, "r");
+	if (!fd)
+	{
+		dprintf(2, "Can not open file\n");
+		fclose(fd);
+		exit(EXIT_FAILURE);
+	}
 
 	while (getline(&buff, &buff_size, fd) != -1)
 	{
@@ -62,12 +71,16 @@ int read_map_size(sdl_rt *map, FILE *fd)
 			map->width = count_numbers(buff);
 			if (!(map->width))
 			{
-				printf("aqui error\n");
+				dprintf(2, "aqui error\n");
+				free(buff);
+				fclose(fd);
 				return(0);
 			}
 		}
 		map->height++;
 	}
+	free(buff);
+	fclose(fd);
 	return (1);
 }
 
@@ -81,10 +94,10 @@ int read_map_size(sdl_rt *map, FILE *fd)
  */
 void set_grid_value(int *grid_line, char *line)
 {
-	int i;
+	int i = 0;
 	char **list;
 
-	list = ft_strsplit(line, ' ');
+	strsplit(line, list, ' ');
 	i = 0;
 	while (list[i])
 	{
@@ -104,11 +117,27 @@ void set_grid_value(int *grid_line, char *line)
  */
 int read_map(sdl_rt *map, char *av)
 {
-	FILE *fd;
-	unsigned int j;
+	unsigned int j = 0;
+	size_t buff_size = 0;
+	char *buff = NULL;
+	FILE *fd = NULL;
 
-	/* 	size_t buff_size;
-	char *buff; */
+	/* calculate width and height with getline, strtok, isnumber */
+	if (!read_map_size(map, av))
+	{
+		dprintf(2, "Please only numbers\n");
+		exit(EXIT_FAILURE);
+	}
+	printf("width = %u\n", map->width);
+	printf("height = %u\n", map->height);
+
+	/* create the grid size with width and height */
+	map->grid = malloc(sizeof(unsigned int *) * (map->height + 1));
+	while(j <= map->height)
+		map->grid[j++] = malloc (sizeof(unsigned int) * (map->width + 1));
+	j = 0;
+	printf("here");
+	/* set a value number in each size of grid */
 	fd = fopen(av, "r");
 	if (!fd)
 	{
@@ -116,35 +145,17 @@ int read_map(sdl_rt *map, char *av)
 		fclose(fd);
 		exit(EXIT_FAILURE);
 	}
-	/* calculate width and height with getline, strtok, isnumber */
-	if (!read_map_size(map, fd))
-	{
-		dprintf(2, "Please only numbers\n");
-		fclose(fd);
-		exit(EXIT_FAILURE);
-	}
-	printf("width = %u\n", map->width);
-	printf("height = %u\n", map->height);
-	printf("here");
-	/* create the grid size with width and height *//*
-	map->grid = (unsigned int **)malloc(sizeof(unsigned int *) * (map->height + 1));
-	j = 0;
-	while(j <= map->height)
-		map->grid[j++] = (unsigned int *)malloc (sizeof(unsigned int *) * (map->width + 1));
-	j = 0;
-	printf("here");
-	/* set a value number in each size of grid *//*
-	while(getline(&buff,&buff_size,fd))
+	/* pass each line and asign to a grid of integers*/
+	while(getline(&buff,&buff_size,fd) != -1)
 	{
 		set_grid_value(map->grid[j], buff);
-		/*free(buff); *//*
+		buff = NULL;
 		j++;
 	}
-	/* close fd */
+	/* release fd and buff */
+	free(buff);
 	fclose(fd);
-	/* free(buff); */
 	/* EOF */
-
-	/* map->grid[j] = NULL; */
+	map->grid[j] = NULL;
 	return (1);
 }

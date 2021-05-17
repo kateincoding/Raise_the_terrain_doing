@@ -27,6 +27,6 @@ int program_initialization(sdl_rt *map);
 int read_map(sdl_rt *map, char *av);
 void draw_stuff(sdl_rt map);
 /* aux functions */
-char	**ft_strsplit(char const *s, char c);
+char **ft_strsplit(char const *s, char c);
 
 #endif /* raise_the_terrain_H */
